@@ -1,8 +1,10 @@
 pub mod list;
 pub use self::list::{Stack, List, ListIter};
 
+mod set;
+pub use self::set::{Set};
+
 pub mod binsearchtree;
-pub use self::binsearchtree::{Set};
 
 pub mod leftistheap;
 

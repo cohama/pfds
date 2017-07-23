@@ -2,11 +2,7 @@
 use std::rc::Rc;
 use std::fmt;
 
-pub trait Set<T> {
-    fn empty() -> Self;
-    fn member(&self, elem: &T) -> bool;
-    fn insert(&self, elem: T) -> Self;
-}
+use super::Set;
 
 #[derive(Clone)]
 pub enum Tree<T> {
