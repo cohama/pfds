@@ -1,5 +1,5 @@
 use std::rc::Rc;
-use std::iter::FromIterator;
+use std::iter::{FromIterator};
 
 /// 2.1 リスト
 
@@ -56,8 +56,8 @@ impl <T> List<T>
         }
     }
 
-    pub fn iter(&self) -> ListIter<T> {
-        ListIter {point: self}
+    pub fn iter(&self) -> Iter<T> {
+        Iter {point: self}
     }
 
     pub fn singleton(x: T) -> List<T> {
@@ -73,13 +73,14 @@ impl <T> List<T>
             acc.snoc(x.clone())
         })
     }
+
 }
 
-pub struct ListIter<'a, T: 'a> {
+pub struct Iter<'a, T: 'a> {
     point: &'a List<T>
 }
 
-impl <'a, T> Iterator for ListIter<'a, T>
+impl <'a, T> Iterator for Iter<'a, T>
     where T: Clone
 {
     type Item = &'a T;
@@ -91,6 +92,33 @@ impl <'a, T> Iterator for ListIter<'a, T>
             self.point = self.point.tail();
             Some(ret)
         }
+    }
+}
+
+pub struct IntoIter<T> {
+    vec: ::std::vec::IntoIter<T>
+}
+
+impl <T> Iterator for IntoIter<T>
+    where T: Clone
+{
+    type Item = T;
+    fn next(&mut self) -> Option<T> {
+        self.vec.next()
+    }
+}
+
+impl <T> IntoIterator for List<T>
+    where T: Clone
+{
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+    fn into_iter(self) -> IntoIter<T> {
+        let vec = self.iter()
+            .map(|x|x.clone())
+            .collect::<Vec<T>>()
+            .into_iter();
+        IntoIter {vec}
     }
 }
 
