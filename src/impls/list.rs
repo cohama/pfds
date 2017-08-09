@@ -68,10 +68,36 @@ impl <T> List<T>
         (self.head(), self.tail())
     }
 
+    pub fn to_cons(&self) -> (T, List<T>) {
+        (self.head().clone(), self.tail().clone())
+    }
+
     pub fn reverse(&self) -> List<T> {
         self.iter().fold(Nil, |acc, x| {
             acc.snoc(x.clone())
         })
+    }
+
+    pub fn count(&self) -> usize {
+        match self {
+            &Nil => 0,
+            &Cons(ref rx) => 1 + rx.1.count()
+        }
+    }
+
+    pub fn split_at(&self, n: usize) -> (List<T>, List<T>) {
+        fn walk<U>(xs: &List<U>, n: usize, heads: List<U>) -> (List<U>, List<U>)
+            where U: Clone
+        {
+            match (xs, n) {
+                (&Nil, _) | (_, 0) => (heads.reverse(), xs.clone()),
+                (&Cons(ref rx), n) => {
+                    let heads = heads.snoc(rx.0.clone());
+                    walk(&rx.1, n-1, heads)
+                }
+            }
+        }
+        walk(self, n, Nil)
     }
 
 }

@@ -1,6 +1,7 @@
 [package]
+authors = ["cohama <cohama@live.jp>"]
 name = "pfds"
 version = "0.1.0"
-authors = ["cohama <cohama@live.jp>"]
 
 [dependencies]
+stopwatch = "0.0.7"

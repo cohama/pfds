@@ -1,11 +1,11 @@
-use std::rc::Rc;
-
 use super::{Stack, List, Heap};
 use super::List::*;
 
 #[derive(Debug)]
-pub struct BinominalTree<T> {
-    node: Rc<T>,
+pub struct BinominalTree<T>
+    where T: Clone
+{
+    node: T,
     sub: List<BinominalTree<T>>
 }
 
@@ -13,7 +13,9 @@ pub struct BinominalTree<T> {
 // 手動で実装する
 // http://qnighy.hatenablog.com/entry/2017/06/01/070000
 // #26925
-impl <T> Clone for BinominalTree<T> {
+impl <T> Clone for BinominalTree<T>
+    where T: Clone
+{
     fn clone(&self) -> BinominalTree<T> {
         BinominalTree {
             node: self.node.clone(),
@@ -23,7 +25,7 @@ impl <T> Clone for BinominalTree<T> {
 }
 
 impl <T> BinominalTree<T>
-    where T: Ord
+    where T: Ord + Clone
 {
     pub fn link(&self, that: &BinominalTree<T>) -> BinominalTree<T> {
         if self.node < that.node {
@@ -44,7 +46,7 @@ impl <T> BinominalTree<T>
 pub type BHeap<T> = (List<(i32, BinominalTree<T>)>);
 
 fn ins_tree<T>(rank: i32, t: BinominalTree<T>, ts: &BHeap<T>) -> BHeap<T>
-    where T: Ord
+    where T: Ord + Clone
 {
     match ts {
         &Nil => List::singleton((rank, t.clone())),
@@ -60,7 +62,7 @@ fn ins_tree<T>(rank: i32, t: BinominalTree<T>, ts: &BHeap<T>) -> BHeap<T>
 }
 
 fn remove_min_tree<T>(ts: &BHeap<T>) -> (&BinominalTree<T>, BHeap<T>)
-    where T: Ord
+    where T: Ord + Clone
 {
     if Stack::is_empty(ts) {
         panic!("remove from empty tree");
@@ -97,7 +99,7 @@ fn remove_min_tree<T>(ts: &BHeap<T>) -> (&BinominalTree<T>, BHeap<T>)
 }
 
 impl <T> Heap<T> for BHeap<T>
-    where T: Ord
+    where T: Ord + Clone
 {
     fn empty() -> BHeap<T> {
         Stack::empty()
@@ -108,7 +110,7 @@ impl <T> Heap<T> for BHeap<T>
 
     fn insert(&self, x: T) -> BHeap<T> {
         let t = BinominalTree {
-            node: Rc::new(x),
+            node: x,
             sub: List::Nil
         };
         ins_tree(0, t, &self)
@@ -140,10 +142,10 @@ impl <T> Heap<T> for BHeap<T>
         } else {
             let (&(_, ref x), xs) = self.decom();
             if Stack::is_empty(xs) {
-                x.node.as_ref()
+                &x.node
             } else {
                 let y = xs.find_min();
-                ::std::cmp::min(x.node.as_ref(), y)
+                ::std::cmp::min(&x.node, y)
             }
         }
     }
